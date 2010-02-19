@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>content</key>
+	<string>delete_metadata( '${1:string meta_type}', ${2:int object_id}, '${3:string meta_key}', '${4:string meta_value}', ${5:false} )</string>
+	<key>name</key>
+	<string>delete_metadata</string>
+	<key>scope</key>
+	<string>source.php, text</string>
+	<key>tabTrigger</key>
+	<string>metadata</string>
+	<key>uuid</key>
+	<string>186841B1-6DA5-415E-879A-9909EA924FCF</string>
+</dict>
+</plist>
