@@ -3,7 +3,7 @@
 <plist version="1.0">
 <dict>
 	<key>content</key>
-	<string>update_metadata( '${1:string meta_type}', ${2:int object_id}, '${3:string meta_key}', '${4:string meta_value}', '${5:string prev_value}' )</string>
+	<string>update_metadata( '${1:string meta_type}', ${2:int object_id}, '${3:string meta_key}', '${4:string meta_value}', '${5:string prev_value}' );</string>
 	<key>name</key>
 	<string>update_metadata</string>
 	<key>scope</key>
