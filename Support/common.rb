@@ -7,7 +7,9 @@ require ENV['TM_SUPPORT_PATH'] + '/lib/current_word'
 module WordPress
   
   @prefspath = "#{ENV['HOME']}/Library/Preferences/com.macromates.textmate.wordpress.plist"
-  
+ 
+# wpdb/wp_query
+ 
   def self.wpdb
     # manually built array until I can get proper function/class scraping
     choices = [
@@ -153,10 +155,6 @@ module WordPress
     TextMate.exit_insert_snippet(ret)    
   end
   
-  def self.wp_query_is
-    
-  end
-  
   def self.query_var(format_array = false)
     choices = [
       { 'title' => 'attachment' },
@@ -167,23 +165,36 @@ module WordPress
       { 'title' => 'category_name' },
       { 'title' => 'category__in' },
       { 'title' => 'category__not_in' },
+      { 'title' => 'child_of' },
       { 'title' => 'comments_popup' },
+      { 'title' => 'comments_per_page' },
       { 'title' => 'day' },
       { 'title' => 'error' },
       { 'title' => 'feed' },
+      { 'title' => 'fields' },
       { 'title' => 'hour' },
+      { 'title' => 'hierarchical' },
       { 'title' => 'm' },
+      { 'title' => 'meta_key' },
+      { 'title' => 'meta_value' },
       { 'title' => 'minute' },
       { 'title' => 'monthnum' },
       { 'title' => 'name' },
+      { 'title' => 'order' },
+      { 'title' => 'orderby' },
       { 'title' => 'p' },
+      { 'title' => 'page' },
       { 'title' => 'paged' },
       { 'title' => 'pagename' },
       { 'title' => 'page_id' },
+      { 'title' => 'post_mime_type' },
       { 'title' => 'post_status' },
       { 'title' => 'post_type' },
       { 'title' => 'preview' },
+      { 'title' => 's' },
+      { 'title' => 'search_terms' },
       { 'title' => 'second' },
+      { 'title' => 'showposts' },
       { 'title' => 'tag' },
       { 'title' => 'tag_id' },
       { 'title' => 'tag__and' },
@@ -191,6 +202,7 @@ module WordPress
       { 'title' => 'tag__not_in' },
       { 'title' => 'tag__slug_and' },
       { 'title' => 'tag__slug_in' },
+      { 'title' => 'tax_query' },
       { 'title' => 'taxonomy' },
       { 'title' => 'tb' },
       { 'title' => 'term' },
@@ -211,7 +223,9 @@ module WordPress
       TextMate.exit_insert_snippet("'" + t['title'] + "' => ${1:'${2:val}'},$0")
     end
   end
-  
+ 
+# admin menus
+ 
   def self.admin_menu
     choices = [
       { 'title' => 'menu' },
@@ -255,9 +269,99 @@ module WordPress
       TextMate.exit_discard()
     end
     
-    add_menu = "add_submenu_page('" + t['insert'] + "',__('${2:page_title}'),__('${3:menu_title}'),${4:access_level},${5:basename(__FILE__)},'${6:function}');$0"
+    add_menu = "add_submenu_page('" + t['insert'] + "',__('${1:page_title}'),__('${2:menu_title}'),${3:access_level},${4:basename(__FILE__)},'${5:function}');$0"
     TextMate.exit_insert_snippet(add_menu)
   end
+
+# Metadata
+
+  # metadata wrapper
+  def self.metadata()
+    choices = [
+      { 'title' => 'add_metadata' },
+      { 'title' => 'delete_metadata' },
+      { 'title' => 'get_metadata' },
+      { 'title' => 'update_metadata' },
+      { 'title' => '_get_meta_table' }
+    ]
+    t = TextMate::UI.menu(choices)
+    
+    if t == nil
+      TextMate.exit_discard()
+    end
+    
+    ret = eval t['title']
+    
+    TextMate.exit_insert_snippet(ret)
+  end
+  
+  @metadata_types = [
+    { 'title' => 'comment' },
+    { 'title' => 'post' },
+    { 'title' => 'user' }
+  ]
+
+  # add metadata
+  def self.add_metadata
+    t = TextMate::UI.menu(@metadata_types)
+ 
+    if t == nil
+      TextMate.exit_discard()
+    end
+    
+    add_metadata = "add_metadata( '" + t['title'] + "', ${1:int object_id}, '${2:string meta_key}', ${3:false});"
+    TextMate.exit_insert_snippet(add_metadata)
+  end
+  
+  # get metadata
+  def self.get_metadata
+    t = TextMate::UI.menu(@metadata_types)
+    
+    if t == nil
+      TextMate.exit_discard()
+    end
+    
+    get_metadata = "get_metadata( '" + t['title'] + "', ${1:int object_id}, '${2:string meta_key}', ${3:false});"
+    TextMate.exit_insert_snippet(get_metadata)
+  end
+
+  # delete metadata
+  def self.delete_metadata
+    t = TextMate::UI.menu(@metadata_types)
+    
+    if t == nil
+      TextMate.exit_discard()
+    end
+    
+    delete_metadata = "delete_metadata( '" + t['title'] + "', ${1:int object_id}, '${2:string meta_key}', ${3:false});"
+    TextMate.exit_insert_snippet(delete_metadata)
+  end
+  
+  # update meta cache
+  def self.update_meta_cache
+    t = TextMate::UI.menu(@metadata_types)
+    
+    if t == nil
+      TextMate.exit_discard()
+    end
+    
+    update_meta_cache = "update_meta_cache('" + t['title'] + "', ${1:object_ids});"
+    TextMate.exit_insert_snippet(update_meta_cache);
+  end
+  
+  # get meta table
+  def self._get_meta_table
+      t = TextMate::UI.menu(@metadata_types)
+
+      if t == nil
+        TextMate.exit_discard()
+      end
+      
+      meta_table = "_get_meta_table('" + t['title'] + "');"
+      TextMate.exit_insert_snippet(meta_table)
+  end
+  
+# bloginfo 
   
   # bloginfo/get_bloginfo handler
   def self.bloginfo(get_bloginfo = false)
@@ -270,7 +374,7 @@ module WordPress
       { 'display' => 'comments_atom_url' },
       { 'display' => 'comments_rss2_url' },
       { 'display' => 'description' },
-      { 'display' => 'home' },
+     #{ 'display' => 'home' },
       { 'display' => 'html_type' },
       { 'display' => 'language' },
       { 'display' => 'name' },
@@ -278,7 +382,7 @@ module WordPress
       { 'display' => 'rdf_url' },
       { 'display' => 'rss2_url' },
       { 'display' => 'rss_url' },
-      { 'display' => 'siteurl' },
+      #{ 'display' => 'siteurl' },
       { 'display' => 'stylesheet_directory' },
       { 'display' => 'stylesheet_url' },
       { 'display' => 'template_directory' },
@@ -298,13 +402,16 @@ module WordPress
     end
   end
   
+# enqueue
+
   # Wrapper for enqueue functions
   def self.enqueue()
     choices = [
       { 'title' => 'script', 'func_to_call' => 'enqueue_script' },
       { 'title' => 'script, from theme', 'func_to_call' => 'enqueue_from_theme' },
       { 'title' => 'script, from plugin', 'func_to_call' => 'enqueue_from_plugin' },
-      { 'title' => 'style', 'func_to_call' => 'enqueue_style' }
+      { 'title' => 'style', 'func_to_call' => 'enqueue_style' },
+      { 'title' => 'conditional style', 'func_to_call' => 'enqueue_style_conditional' }
     ]
     
     t = TextMate::UI.menu(choices)
@@ -324,22 +431,162 @@ module WordPress
   
   # enqueue a style
   def self.enqueue_style()
-    style = "wp_enqueue_style('\${1:style_id}',get_bloginfo('template_directory').'\${2:/css/mystyle.css}',\${3:array('\${4:string dependency}')},\${5:float version},'\${6:string media}');\$0"    
+    style = "wp_enqueue_style('\${1:style_id}', get_bloginfo('template_directory').'\${2:/css/mystyle.css}', \${3:array('\${4:string dependency}')}, \${5:float version}, '\${6:string media}');\$0"    
+    return style
+  end
+  
+  # enqueue a conditional style
+  def self.enqueue_style_conditional()
+    style = "wp_register_style('\${1:style_id}', '\${2:style_path}', \${3:array('\${4:string dependency}')}, \${5:float version}, '\${6:string media}');\n"
+    style += "\$GLOBALS['wp_styles']->add_data('\$1', 'conditional', '\${7:lte IE 7}');\n"
+    style += "wp_enqueue_style('\$1');\$0\n"
+    
     return style
   end
  
  # enqueue a script from the theme
  def self.enqueue_from_theme()
-   script = "wp_enqueue_script('\${1:script_name}',get_bloginfo('template_directory').'\${2:/js/myscript.js}',\${3:array('\${4:string dependency}')},\${5:float version});\$0"
+   script = "wp_enqueue_script('\${1:script_name}', get_bloginfo('template_directory').'\${2:/js/myscript.js}', \${3:array('\${4:string dependency}')}, \${5:float version});\$0"
    return script
  end
   
  # enqueue a script from a plugin
  def self.enqueue_from_plugin()
-   script = "wp_enqueue_script('\${1:string script_id}','/index.php?\${2:my_action}=\${3:action_handler}',\${4:array('\${5:string dependency}')},\${6:float version});\$0"
+   script = "wp_enqueue_script('\${1:string script_id}', '/index.php?\${2:my_action}=\${3:action_handler}', \${4:array('\${5:string dependency}')}, \${6:float version});\$0"
    return script
  end
-  
+
+ # enqueue a predefined script from WordPress
+ def self.enqueue_script()
+    choices = [
+      { 'display' => 'admin-bar' },
+      { 'display' => 'admin-categories' },
+      { 'display' => 'admin-comments' },
+      { 'display' => 'admin-custom-fields' },
+      { 'display' => 'admin-gallery' },
+      { 'display' => 'admin-tags' },
+      { 'display' => 'admin-widgets' },
+      { 'display' => 'ajaxcat' },
+      { 'display' => 'autosave' },
+      { 'display' => 'colorpicker' },
+      { 'display' => 'colors' },
+      { 'display' => 'colors-classic' },
+      { 'display' => 'colors-fresh' },
+      { 'display' => 'comment' },
+      { 'display' => 'comment-reply' },
+      { 'display' => 'common' },
+      { 'display' => 'cropper' },
+      { 'display' => 'custom-background' },
+      { 'display' => 'dashboard' },
+      { 'display' => 'editor' },
+      { 'display' => 'farbtastic' },
+      { 'display' => 'global' },
+      { 'display' => 'hoverIntent' },
+      { 'display' => 'ie' },
+      { 'display' => 'image-edit' },
+      { 'display' => 'imgareaselect' },
+      { 'display' => 'inline-edit-post' },
+      { 'display' => 'inline-edit-tax' },
+      { 'display' => 'install' },
+      { 'display' => 'jcrop' },
+      { 'display' => 'jquery' },
+      { 'display' => 'jquery-color' },
+      { 'display' => 'jquery-form' },
+      { 'display' => 'jquery-hotkeys' },
+      { 'display' => 'jquery-query' },
+      { 'display' => 'jquery-serialize-object' },
+      { 'display' => 'jquery-table-hotkeys' },
+      { 'display' => 'jquery-ui-button' },
+      { 'display' => 'jquery-ui-core' },
+      { 'display' => 'jquery-ui-dialog' },
+      { 'display' => 'jquery-ui-draggable' },
+      { 'display' => 'jquery-ui-droppable' },
+      { 'display' => 'jquery-ui-mouse' },
+      { 'display' => 'jquery-ui-position' },
+      { 'display' => 'jquery-ui-resizable' },
+      { 'display' => 'jquery-ui-selectable' },
+      { 'display' => 'jquery-ui-sortable' },
+      { 'display' => 'jquery-ui-tabs' },
+      { 'display' => 'jquery-ui-widget' },
+      { 'display' => 'json2' },
+      { 'display' => 'l10n' },
+      { 'display' => 'link' },
+      { 'display' => 'list-revisions' },
+      { 'display' => 'list-table' },
+      { 'display' => 'login' },
+      { 'display' => 'media' },
+      { 'display' => 'media-upload' },
+      { 'display' => 'ms' },
+      { 'display' => 'nav-menu' },
+      { 'display' => 'password-strength-meter' },
+      { 'display' => 'plugin-install' },
+      { 'display' => 'post' },
+      { 'display' => 'postbox' },
+      { 'display' => 'press-this' },
+      { 'display' => 'prototype' },
+      { 'display' => 'quicktags' },
+      { 'display' => 'sack' },
+      { 'display' => 'schedule' },
+      { 'display' => 'scriptaculous' },
+      { 'display' => 'scriptaculous-builder' },
+      { 'display' => 'scriptaculous-controls' },
+      { 'display' => 'scriptaculous-dragdrop' },
+      { 'display' => 'scriptaculous-effects' },
+      { 'display' => 'scriptaculous-root' },
+      { 'display' => 'scriptaculous-slider' },
+      { 'display' => 'scriptaculous-sound' },
+      { 'display' => 'set-post-thumbnail' },
+      { 'display' => 'suggest' },
+      { 'display' => 'swfobject' },
+      { 'display' => 'swfupload' },
+      { 'display' => 'swfupload-all' },
+      { 'display' => 'swfupload-handlers' },
+      { 'display' => 'swfupload-queue' },
+      { 'display' => 'swfupload-speed' },
+      { 'display' => 'swfupload-swfobject' },
+      { 'display' => 'theme' },
+      { 'display' => 'theme-editor' },
+      { 'display' => 'theme-install' },
+      { 'display' => 'theme-preview' },
+      { 'display' => 'thickbox' },
+      { 'display' => 'user-profile' },
+      { 'display' => 'utils' },
+      { 'display' => 'widgets' },
+      { 'display' => 'word-count' },
+      { 'display' => 'wp-admin' },
+      { 'display' => 'wp-ajax-response' },
+      { 'display' => 'wp-jquery-ui-dialog' },
+      { 'display' => 'wp-lists' },
+      { 'display' => 'wpdialogs-popup' },
+      { 'display' => 'wplink' },
+      { 'display' => 'xfn' }
+    ]
+    TextMate::UI.complete(choices)
+    
+    script = "wp_enqueue_script('\${1}');\$0" 
+    return script
+  end
+
+# internationalization
+ 
+  def self.intl()    
+    domain = "\${1:\${WP_TEXT_DOMAIN:domain}}"
+    if ENV['TM_SCOPE'].include? 'string.quoted.single.php'
+      ret = "'.__('" + ENV['TM_SELECTED_TEXT'] + "', '" + domain + "').'\$0"
+    elsif ENV['TM_SCOPE'].include? 'string.quoted.double.php'
+      ret = '".__("' + ENV['TM_SELECTED_TEXT'] + '", "' + domain + '")."$0'
+    elsif ENV['TM_SCOPE'].include? 'source.php'
+      ret = '__(' + ENV['TM_SELECTED_TEXT'] + ", '" + domain + "')\$0"
+    elsif ENV['TM_SCOPE'].include? 'text.html'
+      ret = "<?php _e('" + ENV['TM_SELECTED_TEXT'] + "', '" + domain + "'); ?>\$0"
+    else
+      ret = "__('" + ENV['TM_SELECTED_TEXT'] + "', '" + domain + "')\$0"
+    end
+    TextMate.exit_insert_snippet(ret)
+  end
+ 
+# function definition
+ 
   def self.function_define()
     found = self.search_functions_by_name(Word.current_word('a-zA-Z0-9_'))
     if found.is_a?(Hash)
@@ -405,6 +652,8 @@ module WordPress
     choices = OSX::PropertyList.load(File.read(ENV['TM_BUNDLE_SUPPORT'] + '/function_defs.plist'))
     found = choices.find { |i| i['name'] == search }
   end
+
+# user roles
   
   # set a user role
   def self.user_can()
@@ -458,69 +707,86 @@ module WordPress
     TextMate.exit_insert_snippet(ret)    
   end
   
- # enqueue a predefined script from WordPress
- def self.enqueue_script()
+# Cache
+  def self.cache()
     choices = [
-      { 'display' => 'scriptaculous-root' },
-      { 'display' => 'scriptaculous-builder' },
-      { 'display' => 'scriptaculous-dragdrop' },
-      { 'display' => 'scriptaculous-effects' },
-      { 'display' => 'scriptaculous-slider' },
-      { 'display' => 'scriptaculous-sound' },
-      { 'display' => 'scriptaculous-controls' },
-      { 'display' => 'scriptaculous' },
-      { 'display' => 'cropper' },
-      { 'display' => 'swfupload' },
-      { 'display' => 'swfupload-degrade' },
-      { 'display' => 'swfupload-queue' },
-      { 'display' => 'swfupload-handlers' },
-      { 'display' => 'jquery' },
-      { 'display' => 'jquery-form' },
-      { 'display' => 'jquery-color' },
-      { 'display' => 'jquery-ui-core' },
-      { 'display' => 'jquery-ui-tabs' },
-      { 'display' => 'jquery-ui-sortable' },
-      { 'display' => 'interface' },
-      { 'display' => 'schedule' },
-      { 'display' => 'suggest' },
-      { 'display' => 'thickbox' },
-      { 'display' => 'sack' },
-      { 'display' => 'quicktags' },
-      { 'display' => 'colorpicker' },
-      { 'display' => 'tiny_mce' },
-      { 'display' => 'prototype' },
-      { 'display' => 'autosave' },
-      { 'display' => 'wp-ajax-response' },
-      { 'display' => 'wp-lists' },
-      { 'display' => 'common' },
-      { 'display' => 'editor' },
-      { 'display' => 'editor-functions' },
-      { 'display' => 'ajaxcat' },
-      { 'display' => 'admin-categories' },
-      { 'display' => 'admin-tags' },
-      { 'display' => 'admin-custom-fields' },
-      { 'display' => 'password-strength-meter' },
-      { 'display' => 'admin-comments' },
-      { 'display' => 'admin-users' },
-      { 'display' => 'admin-forms' },
-      { 'display' => 'xfn' },
-      { 'display' => 'upload' },
-      { 'display' => 'postbox' },
-      { 'display' => 'slug' },
-      { 'display' => 'post' },
-      { 'display' => 'page' },
-      { 'display' => 'link' },
-      { 'display' => 'comment' },
-      { 'display' => 'admin-gallery' },
-      { 'display' => 'media-upload' },
-      { 'display' => 'admin-widgets' },
-      { 'display' => 'word-count' },
-      { 'display' => 'wp-gears' },
-      { 'display' => 'theme-preview' }
+      { 'title' => 'add' },
+      { 'title' => 'delete' },
+      { 'title' => 'get' },
+      { 'title' => 'set' }
     ]
-    TextMate::UI.complete(choices)
-    
-    script = "wp_enqueue_script('\${1}');\$0" 
-    return script
+    t = TextMate::UI.menu(choices)
+    method = "cache_" + t['title']
+    self.send method
+  end
+  
+  def self.cache_add()
+    ret = "wp_cache_add('${1:cache_id}', \\$\${2:data}, '\${3:cache_flag}', \${4:cache_timeout_seconds});\$0"
+    TextMate.exit_insert_snippet(ret)
+  end
+
+  def self.cache_set()
+    ret = "wp_cache_set('${1:cache_id}', \\$\${2:data}, '\${3:cache_flag}', \${4:cache_timeout_seconds});\$0"
+    TextMate.exit_insert_snippet(ret)    
+  end
+  
+  def self.cache_get()
+    ret = "if (\\$\${1:cache_data} = wp_cache_get('\${2:cache_id}', '\${3:cache_flag}')) {\n" +
+    	    "\treturn \\$\$1;\n"+
+          "}\$0"
+    TextMate.exit_insert_snippet(ret)
+  end
+  
+  def self.cache_delete()
+    ret = "wp_cache_delete('\${1:cache_id}', '\${2:cache_flag}');\$0"
+    TextMate.exit_insert_snippet(ret)
+  end
+  
+# Transients
+  def self.transients()
+    choices = [
+      { 'title' => 'get' },
+      { 'title' => 'set' },
+      { 'title' => 'delete' }
+    ]
+    t = TextMate::UI.menu(choices)
+    method = "transient_" + t['title']
+    self.send method
+  end
+
+  def self.transient_set()
+    ret = "set_transient('${1:cache_id}', \\$\${2:data}, \${4:transient_timeout_seconds});\$0"
+    TextMate.exit_insert_snippet(ret)    
+  end
+
+  def self.transient_get()
+    ret = "if (\\$\${1:cache_data} = get_transient('\${2:cache_id}')) {\n" +
+    	    "\treturn \\$\$1;\n"+
+          "}\$0"
+    TextMate.exit_insert_snippet(ret)
+  end
+
+  def self.transient_delete()
+    ret = "delete_transient('\${1:cache_id}');\$0"
+    TextMate.exit_insert_snippet(ret)
+  end
+   
+# Theme Support
+  @support_items = [
+    { 'title' => 'post-thumbnails' },
+    { 'title' => 'automatic-feed-links' },
+    { 'title' => 'nav-menus' }
+  ]
+
+  # add metadata
+  def self.theme_support(dir)
+    t = TextMate::UI.menu(@support_items)
+ 
+    if t == nil
+      TextMate.exit_discard()
+    end
+
+    retval = (dir == 'remove' ? 'remove' : 'add') + "_theme_support('" + t['title'] + "');"
+    TextMate.exit_insert_snippet(retval)
   end
 end

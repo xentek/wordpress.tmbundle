@@ -6,18 +6,23 @@
 	<string>nop</string>
 	<key>command</key>
 	<string>#!/usr/bin/env ruby -wKU
-require "#{ENV['TM_BUNDLE_SUPPORT']}/validator.rb"
-WPValidator.validate_readme
-</string>
+path = ENV['TM_BUNDLE_PATH'] + '/Support/common.rb'
+require path
+
+WordPress.intl()</string>
+	<key>fallbackInput</key>
+	<string>word</string>
 	<key>input</key>
-	<string>document</string>
+	<string>selection</string>
 	<key>keyEquivalent</key>
-	<string>~@V</string>
+	<string>@I</string>
 	<key>name</key>
-	<string>Validate Plugin ReadMe</string>
+	<string>Internationalize</string>
 	<key>output</key>
-	<string>showAsHTML</string>
+	<string>insertAsSnippet</string>
+	<key>scope</key>
+	<string>source.php, text.html</string>
 	<key>uuid</key>
-	<string>EF2C5F4A-F5BE-404A-AC03-BB32DAACDCE8</string>
+	<string>B255E225-7654-4230-AD3A-190B2522324E</string>
 </dict>
 </plist>

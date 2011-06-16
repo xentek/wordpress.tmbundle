@@ -10,20 +10,21 @@ require ENV['TM_SUPPORT_PATH'] + '/lib/osx/plist'
 require ENV['TM_SUPPORT_PATH'] + '/lib/ui'
 require ENV['TM_SUPPORT_PATH'] + '/lib/exit_codes'
 
-choices = OSX::PropertyList.load(File.read(ENV['TM_BUNDLE_SUPPORT'] + '/functions.plist'))
-TextMate::UI.complete(choices, :initial_filter =&gt; 'get_', :extra_chars =&gt; '_')
-TextMate.exit_insert_snippet('get_')</string>
+path = ENV['TM_BUNDLE_PATH'] + '/Support/common.rb'
+require path
+
+WordPress.metadata()</string>
 	<key>input</key>
 	<string>none</string>
 	<key>name</key>
-	<string>get_...</string>
+	<string>metadata</string>
 	<key>output</key>
 	<string>insertAsSnippet</string>
 	<key>scope</key>
-	<string>source.php</string>
+	<string>source.php, text.html</string>
 	<key>tabTrigger</key>
-	<string>get_</string>
+	<string>metadata</string>
 	<key>uuid</key>
-	<string>5DE5A7AD-3347-4FF4-BA87-1D4965D601FA</string>
+	<string>4716EA72-4614-4E7C-AE14-E04F0A8FB596</string>
 </dict>
 </plist>
